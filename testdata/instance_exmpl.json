@@ -1,0 +1,22 @@
+
+
+[
+  {
+    "id": "i-1234567890abcdef0",
+    "instance_type": "t3.micro",
+    "state": "running",
+    "tags": {
+      "Name": "mock-web-server",
+      "Environment": "dev"
+    }
+  },
+  {
+    "id": "i-0987654321fedcba0",
+    "instance_type": "m5.large",
+    "state": "stopped",
+    "tags": {
+      "Name": "mock-analytics",
+      "Team": "Data"
+    }
+  }
+]
