@@ -302,7 +302,7 @@ cloud-optimiser --debug discover
 | **Mock/Real Separation** | • Safe testing without AWS<br>• No credentials needed for dev<br>• Fast iteration | • Must maintain mock data<br>• Two code paths to test |
 | **CLI Architecture (Cobra)** | • Scriptable and automatable<br>• No GUI complexity | • Less accessible for non-technical users<br>• Requires terminal access |
 | **Threshold-Based Rules** | • Transparent logic<br>• Easy to explain<br> | • Not ML-based<br>• May miss complex patterns<br>• Fixed thresholds |
-| **No Historical Database** | • Stateless operation<br>• Zero persistence overhead<br>• Simple deployment | • Can't track trends<br>• No change history<br>• Requires re-query for updates |
+| **No Historical Database** | • Stateless<br>• Simple deployment & setup | • Can't track trends<br>• Requires re-query for updates |
 
 ---
 
