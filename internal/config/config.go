@@ -19,7 +19,7 @@ func getConfigPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	dir := filepath.Join(home, ".cloud-optimiser")
+	dir := filepath.Join(home, "cloud-optimiser")
 
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		os.MkdirAll(dir, 0700)
@@ -27,6 +27,7 @@ func getConfigPath() (string, error) {
 
 	return filepath.Join(dir, "config.json"), nil
 }
+
 
 func LoadConfig() (AppConfig, error) {
 	path, err := getConfigPath()

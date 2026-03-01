@@ -19,7 +19,7 @@ var discoverCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
 
-		// 1. Load config & resolve initial mode
+		// Load config & resolve initial mode
 		cfg, err := config.LoadConfig()
 		if err != nil {
 			logging.Warn(fmt.Sprintf("Could not load config: %v, defaulting to MOCK mode", err))
@@ -28,7 +28,7 @@ var discoverCmd = &cobra.Command{
 
 		useMockMode := useMock || cfg.Mode == "mock"
 
-		// 2. AWS readiness check (only if not already in mock mode)
+		// AWS readiness check (only if not already in mock mode)
 		if !useMockMode {
 			if err := awsclient.CanUseRealAWS(ctx, awsProfile); err != nil {
 				fmt.Println("AWS unavailable – switching to MOCK mode.")
@@ -37,25 +37,25 @@ var discoverCmd = &cobra.Command{
 			}
 		}
 
-		// 3. Display mode
+		// Display mode
 		fmt.Println("MODE:", map[bool]string{true: "Mock", false: "Real AWS"}[useMockMode])
 		fmt.Println()
 
-		// 4. Create EC2 client
+		// Create EC2 client
 		client, err := awsclient.New(ctx, awsclient.Config{
 			UseMock: useMockMode,
 			Profile: awsProfile,
 		})
 		if err != nil {
-			fmt.Printf("Failed to create EC2 client: %v\n", err)
+			fmt.Printf("Failed to create EC2 client")
 			logging.DebugErr("EC2 client creation failed", err)
 			return
 		}
 
-		// 5. Fetch instances
+		// Fetch instances
 		instances, err := client.ListInstances(ctx)
 		if err != nil {
-			fmt.Printf("Failed to list instances: %v\n", err)
+			fmt.Printf("Failed to list instances")
 			logging.DebugErr("EC2 ListInstances failed", err)
 			return
 		}
@@ -65,7 +65,7 @@ var discoverCmd = &cobra.Command{
 			return
 		}
 
-		// 6. Output
+		// Output
 		fmt.Println("Discovered EC2 Instances:")
 		for _, inst := range instances {
 			fmt.Printf(" - %s (%s) [%s]\n", inst.ID, inst.InstanceType, inst.State)

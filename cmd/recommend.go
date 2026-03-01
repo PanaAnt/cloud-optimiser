@@ -35,7 +35,7 @@ var recommendCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
 
-		// 1. Load config & resolve initial mode
+		// Load config & resolve initial mode
 		cfg, err := config.LoadConfig()
 		if err != nil {
 			logging.Warn(fmt.Sprintf("Could not load config: %v, defaulting to MOCK mode", err))
@@ -44,20 +44,19 @@ var recommendCmd = &cobra.Command{
 
 		useMockMode := useMock || cfg.Mode == "mock"
 
-		// 2. AWS readiness check (only if not already in mock mode)
+		// AWS readiness check (only if not already in mock mode)
 		if !useMockMode {
 			if err := awsclient.CanUseRealAWS(ctx, awsProfile); err != nil {
-				fmt.Println("AWS unavailable – switching to MOCK mode.")
 				logging.DebugErr("AWS readiness check failed", err)
 				useMockMode = true
 			}
 		}
 
-		// 3. Display mode
+		// Display mode
 		fmt.Println("MODE:", map[bool]string{true: "Mock", false: "Real AWS"}[useMockMode])
 		fmt.Println()
 
-		// 4. Create AWS clients
+		// Create AWS clients
 		clientCfg := awsclient.Config{
 			UseMock: useMockMode,
 			Profile: awsProfile,
@@ -65,29 +64,25 @@ var recommendCmd = &cobra.Command{
 
 		ec2Client, err := awsclient.New(ctx, clientCfg)
 		if err != nil {
-			fmt.Printf("Failed to create EC2 client: %v\n", err)
 			logging.DebugErr("EC2 client creation failed", err)
 			return
 		}
 
 		cwClient, err := awsclient.NewCloudWatch(ctx, clientCfg)
 		if err != nil {
-			fmt.Printf("Failed to create CloudWatch client: %v\n", err)
 			logging.DebugErr("CloudWatch client creation failed", err)
 			return
 		}
 
 		ceClient, err := awsclient.NewCostExplorer(ctx, clientCfg)
 		if err != nil {
-			fmt.Printf("Failed to create Cost Explorer client: %v\n", err)
 			logging.DebugErr("Cost Explorer client creation failed", err)
 			return
 		}
 
-		// 5. Fetch EC2 instances
+		// Fetch EC2 instances
 		instances, err := ec2Client.ListInstances(ctx)
 		if err != nil {
-			fmt.Printf("Failed to list instances: %v\n", err)
 			logging.DebugErr("EC2 ListInstances failed", err)
 			return
 		}
@@ -97,7 +92,7 @@ var recommendCmd = &cobra.Command{
 			return
 		}
 
-		// 6. Run analysis
+		// Run analysis
 		recs, err := analyser.AnalyseInstances(
 			ctx,
 			instances,
@@ -112,7 +107,7 @@ var recommendCmd = &cobra.Command{
 			return
 		}
 
-		// 7. Filter + sort
+		// Filter + sort
 		recs = applyFilters(recs)
 		sortRecommendations(recs)
 
@@ -123,7 +118,7 @@ var recommendCmd = &cobra.Command{
 			outputTable(recs)
 		}
 		
-		// 9. Indicate if using mock data
+		// Indicate if using mock data
 		if ec2Client.IsMock() {
 			fmt.Println("\n[Note: Using mock data]")
 		}
